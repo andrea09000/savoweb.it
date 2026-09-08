@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Genera preventivo — SavoWeb</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #07140f;
+        --panel: #0e2219;
+        --ink: #d8f0e0;
+        --muted: #8fb89a;
+        --accent: #7dcf95;
+        --line: rgba(125, 207, 149, 0.22);
+        --paper: #ffffff;
+        --paper-ink: #1a1a1a;
+        --paper-muted: #5a6b62;
+        --paper-green: #0e2219;
+        --paper-accent: #1f7a4d;
+        --paper-soft: #f3f7f4;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Sora, system-ui, sans-serif;
+        background:
+          radial-gradient(ellipse 80% 50% at 10% 0%, rgba(125, 207, 149, 0.12), transparent),
+          var(--bg);
+        color: var(--ink);
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: minmax(300px, 400px) 1fr;
+        gap: 1.25rem;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 1.25rem;
+        min-height: 100vh;
+      }
+
+      @media (max-width: 960px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: rgba(14, 34, 25, 0.85);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 1.25rem;
+        height: fit-content;
+        position: sticky;
+        top: 1.25rem;
+      }
+
+      .panel h1 {
+        margin: 0 0 0.25rem;
+        font-size: 1.15rem;
+        font-weight: 700;
+      }
+
+      .panel .lead {
+        margin: 0 0 1.25rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+        font-weight: 300;
+      }
+
+      label {
+        display: block;
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0.85rem 0 0.35rem;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: #07140f;
+        color: var(--ink);
+        border-radius: 10px;
+        padding: 0.65rem 0.75rem;
+        font: inherit;
+        font-size: 0.92rem;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: 2px solid rgba(125, 207, 149, 0.35);
+        border-color: var(--accent);
+      }
+
+      textarea {
+        min-height: 72px;
+        resize: vertical;
+      }
+
+      .row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.65rem;
+      }
+
+      .checks {
+        display: grid;
+        gap: 0.45rem;
+        margin-top: 0.45rem;
+      }
+
+      .check {
+        display: flex;
+        gap: 0.55rem;
+        align-items: flex-start;
+        padding: 0.55rem 0.65rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.88rem;
+      }
+
+      .check input {
+        width: auto;
+        margin-top: 0.15rem;
+      }
+
+      .check strong {
+        display: block;
+        font-weight: 600;
+      }
+
+      .check span {
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 300;
+      }
+
+      .actions {
+        display: grid;
+        gap: 0.55rem;
+        margin-top: 1.25rem;
+      }
+
+      button {
+        appearance: none;
+        border: 0;
+        border-radius: 999px;
+        padding: 0.85rem 1rem;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #07140f;
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+
+      .hint {
+        margin: 0.75rem 0 0;
+        color: var(--muted);
+        font-size: 0.75rem;
+        line-height: 1.45;
+      }
+
+      .preview-wrap {
+        display: flex;
+        justify-content: center;
+        padding-bottom: 2rem;
+      }
+
+      /* —— Document (PDF look) —— */
+      #documento {
+        width: 210mm;
+        min-height: 297mm;
+        background: var(--paper);
+        color: var(--paper-ink);
+        padding: 16mm 16mm 14mm;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+        border-radius: 4px;
+      }
+
+      #documento * {
+        color: inherit;
+      }
+
+      .doc-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.35rem;
+      }
+
+      .doc-brand img {
+        width: 36px;
+        height: 36px;
+      }
+
+      .doc-brand .name {
+        font-size: 1.55rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        color: var(--paper-green);
+      }
+
+      .doc-brand .name span {
+        color: var(--paper-accent);
+      }
+
+      .doc-sub,
+      .doc-contact {
+        color: var(--paper-muted) !important;
+        font-size: 0.82rem;
+        margin: 0.1rem 0;
+      }
+
+      .doc-rule {
+        height: 3px;
+        background: var(--paper-accent);
+        margin: 0.9rem 0 1rem;
+        border: 0;
+      }
+
+      .doc-title {
+        margin: 0;
+        font-size: 1.45rem;
+        letter-spacing: 0.04em;
+        color: var(--paper-green);
+      }
+
+      .doc-meta {
+        margin: 0.35rem 0 1rem;
+        color: var(--paper-muted) !important;
+        font-size: 0.9rem;
+      }
+
+      .doc-meta strong {
+        color: var(--paper-ink);
+      }
+
+      .section-label {
+        margin: 1.1rem 0 0.45rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--paper-accent) !important;
+        font-weight: 700;
+      }
+
+      .kv {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+
+      .kv td {
+        padding: 0.28rem 0;
+        vertical-align: top;
+      }
+
+      .kv td:first-child {
+        width: 34%;
+        color: var(--paper-muted) !important;
+        font-weight: 600;
+      }
+
+      .pkg {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .pkg-item {
+        display: grid;
+        grid-template-columns: 1.2rem 7rem 1fr;
+        gap: 0.4rem;
+        align-items: start;
+        padding: 0.45rem 0.5rem;
+        background: var(--paper-soft);
+        border-radius: 6px;
+        font-size: 0.86rem;
+      }
+
+      .pkg-item .mark {
+        font-weight: 700;
+        color: var(--paper-accent) !important;
+      }
+
+      .pkg-item .pname {
+        font-weight: 700;
+        color: var(--paper-green) !important;
+      }
+
+      .pkg-item .pdesc {
+        color: var(--paper-muted) !important;
+      }
+
+      ul.doc-list {
+        margin: 0.2rem 0 0;
+        padding-left: 1.1rem;
+        font-size: 0.9rem;
+      }
+
+      ul.doc-list li {
+        margin: 0.2rem 0;
+      }
+
+      .money {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0.25rem;
+      }
+
+      .money td {
+        padding: 0.45rem 0.35rem;
+        font-size: 0.92rem;
+        border-bottom: 1px solid #e6eee8;
+      }
+
+      .money td:last-child {
+        text-align: right;
+        font-weight: 700;
+      }
+
+      .money tr.total td {
+        background: #e8f3ec;
+        color: var(--paper-green);
+        border-bottom: 0;
+      }
+
+      .notes {
+        white-space: pre-wrap;
+        font-size: 0.9rem;
+        min-height: 2.5rem;
+        border-bottom: 1px solid #dde6e0;
+        padding-bottom: 0.35rem;
+      }
+
+      .sig {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .sig .box {
+        font-size: 0.86rem;
+      }
+
+      .sig .who {
+        font-weight: 700;
+        color: var(--paper-green) !important;
+        margin-bottom: 1.6rem;
+      }
+
+      .sig .line {
+        color: var(--paper-muted) !important;
+        margin: 0.45rem 0;
+      }
+
+      .doc-foot {
+        margin-top: 1.5rem;
+        padding-top: 0.7rem;
+        border-top: 2px solid var(--paper-green);
+        text-align: center;
+        color: var(--paper-muted) !important;
+        font-size: 0.78rem;
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+
+        .panel,
+        .hint,
+        .no-print {
+          display: none !important;
+        }
+
+        .app {
+          display: block;
+          padding: 0;
+          max-width: none;
+        }
+
+        .preview-wrap {
+          padding: 0;
+        }
+
+        #documento {
+          width: auto;
+          min-height: auto;
+          box-shadow: none;
+          border-radius: 0;
+          padding: 0;
+        }
+
+        @page {
+          size: A4;
+          margin: 14mm;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="panel no-print">
+        <h1>Genera preventivo</h1>
+        <p class="lead">Compila i campi e scarica il PDF. Stesso stile del documento Word.</p>
+
+        <label for="numero">Numero preventivo</label>
+        <input id="numero" value="PRE-001 / 2026" />
+
+        <div class="row2">
+          <div>
+            <label for="data">Data</label>
+            <input id="data" type="date" />
+          </div>
+          <div>
+            <label for="validita">Valido fino a</label>
+            <input id="validita" type="date" />
+          </div>
+        </div>
+
+        <label for="cliente">Nome / Azienda</label>
+        <input id="cliente" placeholder="Es. Rossi SRL" />
+
+        <label for="email">Email cliente</label>
+        <input id="email" type="email" placeholder="cliente@email.it" />
+
+        <label for="telefono">Telefono</label>
+        <input id="telefono" placeholder="+39 ..." />
+
+        <label for="progetto">Progetto</label>
+        <input id="progetto" placeholder="Sito vetrina / e-commerce..." />
+
+        <label>Pacchetto</label>
+        <div class="checks">
+          <label class="check">
+            <input type="radio" name="pacchetto" value="Vetrina" checked />
+            <div>
+              <strong>Vetrina — da € 400</strong>
+              <span>Fino a 3 pagine, design, mobile, SEO base</span>
+            </div>
+          </label>
+          <label class="check">
+            <input type="radio" name="pacchetto" value="Business" />
+            <div>
+              <strong>Business — da € 900</strong>
+              <span>Fino a 7 pagine, SEO + copy, supporto 2 mesi</span>
+            </div>
+          </label>
+          <label class="check">
+            <input type="radio" name="pacchetto" value="E-commerce" />
+            <div>
+              <strong>E-commerce — da € 2.000</strong>
+              <span>Shop, pagamenti, SEO, supporto 4 mesi</span>
+            </div>
+          </label>
+          <label class="check">
+            <input type="radio" name="pacchetto" value="Custom" />
+            <div>
+              <strong>Custom — su misura</strong>
+              <span>Descrivilo nelle note</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="netto">Importo netto (€)</label>
+            <input id="netto" type="number" min="0" step="1" value="900" />
+          </div>
+          <div>
+            <label for="iva">IVA (€)</label>
+            <input id="iva" type="number" min="0" step="1" value="0" />
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="accontoPerc">Acconto %</label>
+            <input id="accontoPerc" type="number" min="0" max="100" value="40" />
+          </div>
+          <div>
+            <label for="settimane">Settimane consegna</label>
+            <input id="settimane" type="number" min="1" value="3" />
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="revisioni">Round modifiche</label>
+            <input id="revisioni" type="number" min="0" value="2" />
+          </div>
+          <div>
+            <label for="supporto">Mesi supporto</label>
+            <input id="supporto" type="number" min="0" value="2" />
+          </div>
+        </div>
+
+        <label for="note">Note / dettagli</label>
+        <textarea id="note" placeholder="Requisiti particolari, pagine, riferimenti..."></textarea>
+
+        <div class="actions">
+          <button type="button" class="btn-primary" id="btnPdf">Scarica PDF</button>
+          <button type="button" class="btn-secondary" id="btnReset">Reset campi</button>
+        </div>
+        <p class="hint">
+          Nella finestra di stampa scegli <strong>Salva come PDF</strong> come destinazione.
+          Margini: predefiniti / nessuno.
+        </p>
+      </aside>
+
+      <div class="preview-wrap">
+        <article id="documento">
+          <div class="doc-brand">
+            <img src="/logo-mark.svg" alt="" />
+            <div class="name">Savo<span>Web</span></div>
+          </div>
+          <p class="doc-sub">Creazione siti web a Brescia</p>
+          <p class="doc-contact">info@savoweb.com · www.savoweb.it · Brescia, Italia</p>
+          <hr class="doc-rule" />
+
+          <h2 class="doc-title">PREVENTIVO</h2>
+          <p class="doc-meta">
+            <strong id="out-numero">PRE-001 / 2026</strong>
+            &nbsp;&nbsp; Data: <span id="out-data">—</span>
+            &nbsp;&nbsp; Valido fino a: <span id="out-validita">—</span>
+          </p>
+
+          <p class="section-label">Destinatario</p>
+          <table class="kv">
+            <tr>
+              <td>Nome / Azienda</td>
+              <td id="out-cliente">—</td>
+            </tr>
+            <tr>
+              <td>Email</td>
+              <td id="out-email">—</td>
+            </tr>
+            <tr>
+              <td>Telefono</td>
+              <td id="out-telefono">—</td>
+            </tr>
+            <tr>
+              <td>Progetto</td>
+              <td id="out-progetto">—</td>
+            </tr>
+          </table>
+
+          <p class="section-label">Pacchetto scelto</p>
+          <div class="pkg" id="out-pacchetti"></div>
+
+          <p class="section-label">Cosa include questo preventivo</p>
+          <ul class="doc-list">
+            <li>Design UI su misura e layout responsive</li>
+            <li>Sviluppo frontend e messa online</li>
+            <li>Ottimizzazione SEO come da pacchetto</li>
+            <li>Integrazioni indicate (form, Maps, pagamenti…)</li>
+            <li>Revisione: <span id="out-revisioni">2</span> round di modifiche inclusi</li>
+            <li>Supporto post-lancio: <span id="out-supporto">2</span> mesi</li>
+          </ul>
+
+          <p class="section-label">Non incluso (salvo diverso accordo)</p>
+          <ul class="doc-list">
+            <li>Copywriting esteso / fotografie professionali</li>
+            <li>Hosting annuale e dominio (indicati a parte se richiesti)</li>
+            <li>Funzionalità extra oltre al pacchetto selezionato</li>
+          </ul>
+
+          <p class="section-label">Importo</p>
+          <table class="money">
+            <tr>
+              <td>Importo netto</td>
+              <td id="out-netto">€ 0</td>
+            </tr>
+            <tr>
+              <td>IVA (se applicabile)</td>
+              <td id="out-iva">€ 0</td>
+            </tr>
+            <tr class="total">
+              <td>Totale</td>
+              <td id="out-totale">€ 0</td>
+            </tr>
+            <tr>
+              <td>Acconto per iniziare (<span id="out-acconto-perc">40</span>%)</td>
+              <td id="out-acconto">€ 0</td>
+            </tr>
+          </table>
+
+          <p class="section-label">Tempi di consegna</p>
+          <p style="margin: 0; font-size: 0.9rem">
+            Consegna stimata:
+            <strong id="out-settimane">3</strong>
+            settimane dalla conferma e ricezione acconto.
+          </p>
+
+          <p class="section-label">Note / dettagli progetto</p>
+          <div class="notes" id="out-note">—</div>
+
+          <p class="section-label">Condizioni</p>
+          <ul class="doc-list">
+            <li>Il preventivo è valido fino alla data indicata.</li>
+            <li>Lavori avviati solo dopo conferma scritta e acconto.</li>
+            <li>Saldo a consegna / messa online del progetto.</li>
+            <li>I contenuti (testi, immagini, loghi) sono forniti dal cliente salvo diverso accordo.</li>
+          </ul>
+
+          <p class="section-label">Accettazione</p>
+          <div class="sig">
+            <div class="box">
+              <div class="who">Per SavoWeb</div>
+              <div class="line">Firma: _______________________</div>
+              <div class="line">Data: ____/____/________</div>
+            </div>
+            <div class="box">
+              <div class="who">Per il Cliente</div>
+              <div class="line">Firma: _______________________</div>
+              <div class="line">Data: ____/____/________</div>
+            </div>
+          </div>
+
+          <div class="doc-foot">SavoWeb · info@savoweb.com · https://savoweb.it</div>
+        </article>
+      </div>
+    </div>
+
+    <script>
+      const pkgs = {
+        Vetrina: "One-page / fino a 3 pagine · design personalizzato · mobile · SEO base",
+        Business: "Fino a 7 pagine · design premium · SEO + copy · form + Maps · 2 mesi supporto",
+        "E-commerce": "Catalogo · pagamenti · ordini · SEO e-commerce · 4 mesi supporto",
+        Custom: "Su misura — dettagli nelle note",
+      };
+
+      const euro = (n) =>
+        new Intl.NumberFormat("it-IT", {
+          style: "currency",
+          currency: "EUR",
+          maximumFractionDigits: 0,
+        }).format(Number(n) || 0);
+
+      const fmtDate = (value) => {
+        if (!value) return "—";
+        const [y, m, d] = value.split("-");
+        return `${d}/${m}/${y}`;
+      };
+
+      const todayISO = () => {
+        const d = new Date();
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+      };
+
+      const plusDaysISO = (days) => {
+        const d = new Date();
+        d.setDate(d.getDate() + days);
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+      };
+
+      document.getElementById("data").value = todayISO();
+      document.getElementById("validita").value = plusDaysISO(15);
+
+      function selectedPackage() {
+        return document.querySelector('input[name="pacchetto"]:checked')?.value || "Vetrina";
+      }
+
+      function sync() {
+        const netto = Number(document.getElementById("netto").value) || 0;
+        const iva = Number(document.getElementById("iva").value) || 0;
+        const perc = Number(document.getElementById("accontoPerc").value) || 0;
+        const totale = netto + iva;
+        const acconto = Math.round((totale * perc) / 100);
+        const selected = selectedPackage();
+
+        document.getElementById("out-numero").textContent =
+          document.getElementById("numero").value || "—";
+        document.getElementById("out-data").textContent = fmtDate(
+          document.getElementById("data").value,
+        );
+        document.getElementById("out-validita").textContent = fmtDate(
+          document.getElementById("validita").value,
+        );
+        document.getElementById("out-cliente").textContent =
+          document.getElementById("cliente").value || "—";
+        document.getElementById("out-email").textContent =
+          document.getElementById("email").value || "—";
+        document.getElementById("out-telefono").textContent =
+          document.getElementById("telefono").value || "—";
+        document.getElementById("out-progetto").textContent =
+          document.getElementById("progetto").value || "—";
+        document.getElementById("out-revisioni").textContent =
+          document.getElementById("revisioni").value || "0";
+        document.getElementById("out-supporto").textContent =
+          document.getElementById("supporto").value || "0";
+        document.getElementById("out-netto").textContent = euro(netto);
+        document.getElementById("out-iva").textContent = euro(iva);
+        document.getElementById("out-totale").textContent = euro(totale);
+        document.getElementById("out-acconto-perc").textContent = String(perc);
+        document.getElementById("out-acconto").textContent = euro(acconto);
+        document.getElementById("out-settimane").textContent =
+          document.getElementById("settimane").value || "—";
+        document.getElementById("out-note").textContent =
+          document.getElementById("note").value.trim() || "—";
+
+        document.getElementById("out-pacchetti").innerHTML = Object.keys(pkgs)
+          .map((name) => {
+            const mark = name === selected ? "☑" : "☐";
+            return `<div class="pkg-item"><span class="mark">${mark}</span><span class="pname">${name}</span><span class="pdesc">${pkgs[name]}</span></div>`;
+          })
+          .join("");
+      }
+
+      document.querySelectorAll("input, select, textarea").forEach((el) => {
+        el.addEventListener("input", sync);
+        el.addEventListener("change", sync);
+      });
+
+      document.getElementById("btnPdf").addEventListener("click", () => {
+        const cliente = document.getElementById("cliente").value.trim() || "cliente";
+        const safe = cliente.replace(/[^\w\-]+/g, "_").slice(0, 40);
+        const prev = document.title;
+        document.title = `Preventivo_SavoWeb_${safe}`;
+        window.print();
+        setTimeout(() => {
+          document.title = prev;
+        }, 500);
+      });
+
+      document.getElementById("btnReset").addEventListener("click", () => {
+        document.getElementById("numero").value = "PRE-001 / 2026";
+        document.getElementById("data").value = todayISO();
+        document.getElementById("validita").value = plusDaysISO(15);
+        document.getElementById("cliente").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("telefono").value = "";
+        document.getElementById("progetto").value = "";
+        document.getElementById("netto").value = "900";
+        document.getElementById("iva").value = "0";
+        document.getElementById("accontoPerc").value = "40";
+        document.getElementById("settimane").value = "3";
+        document.getElementById("revisioni").value = "2";
+        document.getElementById("supporto").value = "2";
+        document.getElementById("note").value = "";
+        document.querySelector('input[name="pacchetto"][value="Business"]').checked = true;
+        sync();
+      });
+
+      sync();
+    </script>
+  </body>
+</html>
