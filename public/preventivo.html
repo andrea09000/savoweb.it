@@ -113,6 +113,14 @@
       textarea {
         min-height: 72px;
         resize: vertical;
+        line-height: 1.45;
+      }
+
+      textarea#incluse,
+      textarea#include,
+      textarea#esclusi {
+        min-height: 120px;
+        font-size: 0.84rem;
       }
 
       .row2 {
@@ -513,16 +521,18 @@
           </div>
         </div>
 
-        <div class="row2">
-          <div>
-            <label for="revisioni">Round modifiche</label>
-            <input id="revisioni" type="number" min="0" value="2" />
-          </div>
-          <div>
-            <label for="supporto">Mesi supporto</label>
-            <input id="supporto" type="number" min="0" value="2" />
-          </div>
-        </div>
+        <label for="include">Cosa include (una riga = un punto)</label>
+        <textarea id="include" rows="7">Design UI su misura e layout responsive
+Sviluppo frontend e messa online
+Ottimizzazione SEO come da pacchetto
+Integrazioni indicate (form, Maps, pagamenti…)
+Revisione: 2 round di modifiche inclusi
+Supporto post-lancio: 2 mesi</textarea>
+
+        <label for="esclusi">Non incluso (una riga = un punto)</label>
+        <textarea id="esclusi" rows="5">Copywriting esteso / fotografie professionali
+Hosting annuale e dominio (indicati a parte se richiesti)
+Funzionalità extra oltre al pacchetto selezionato</textarea>
 
         <label for="note">Note / dettagli</label>
         <textarea id="note" placeholder="Requisiti particolari, pagine, riferimenti..."></textarea>
@@ -578,21 +588,10 @@
           <div class="pkg" id="out-pacchetti"></div>
 
           <p class="section-label">Cosa include questo preventivo</p>
-          <ul class="doc-list">
-            <li>Design UI su misura e layout responsive</li>
-            <li>Sviluppo frontend e messa online</li>
-            <li>Ottimizzazione SEO come da pacchetto</li>
-            <li>Integrazioni indicate (form, Maps, pagamenti…)</li>
-            <li>Revisione: <span id="out-revisioni">2</span> round di modifiche inclusi</li>
-            <li>Supporto post-lancio: <span id="out-supporto">2</span> mesi</li>
-          </ul>
+          <ul class="doc-list" id="out-include"></ul>
 
           <p class="section-label">Non incluso (salvo diverso accordo)</p>
-          <ul class="doc-list">
-            <li>Copywriting esteso / fotografie professionali</li>
-            <li>Hosting annuale e dominio (indicati a parte se richiesti)</li>
-            <li>Funzionalità extra oltre al pacchetto selezionato</li>
-          </ul>
+          <ul class="doc-list" id="out-esclusi"></ul>
 
           <p class="section-label">Importo</p>
           <table class="money">
@@ -685,11 +684,33 @@
         return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
       };
 
+      const DEFAULT_INCLUDE = `Design UI su misura e layout responsive
+Sviluppo frontend e messa online
+Ottimizzazione SEO come da pacchetto
+Integrazioni indicate (form, Maps, pagamenti…)
+Revisione: 2 round di modifiche inclusi
+Supporto post-lancio: 2 mesi`;
+
+      const DEFAULT_ESCLUSI = `Copywriting esteso / fotografie professionali
+Hosting annuale e dominio (indicati a parte se richiesti)
+Funzionalità extra oltre al pacchetto selezionato`;
+
       document.getElementById("data").value = todayISO();
       document.getElementById("validita").value = plusDaysISO(15);
 
       function selectedPackage() {
         return document.querySelector('input[name="pacchetto"]:checked')?.value || "Vetrina";
+      }
+
+      function linesToList(text, emptyLabel) {
+        const items = text
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean);
+        if (!items.length) return `<li>${emptyLabel}</li>`;
+        return items
+          .map((line) => `<li>${line.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</li>`)
+          .join("");
       }
 
       function sync() {
@@ -716,10 +737,6 @@
           document.getElementById("telefono").value || "—";
         document.getElementById("out-progetto").textContent =
           document.getElementById("progetto").value || "—";
-        document.getElementById("out-revisioni").textContent =
-          document.getElementById("revisioni").value || "0";
-        document.getElementById("out-supporto").textContent =
-          document.getElementById("supporto").value || "0";
         document.getElementById("out-netto").textContent = euro(netto);
         document.getElementById("out-iva").textContent = euro(iva);
         document.getElementById("out-totale").textContent = euro(totale);
@@ -729,6 +746,14 @@
           document.getElementById("settimane").value || "—";
         document.getElementById("out-note").textContent =
           document.getElementById("note").value.trim() || "—";
+        document.getElementById("out-include").innerHTML = linesToList(
+          document.getElementById("include").value,
+          "—",
+        );
+        document.getElementById("out-esclusi").innerHTML = linesToList(
+          document.getElementById("esclusi").value,
+          "—",
+        );
 
         document.getElementById("out-pacchetti").innerHTML = Object.keys(pkgs)
           .map((name) => {
@@ -766,8 +791,8 @@
         document.getElementById("iva").value = "0";
         document.getElementById("accontoPerc").value = "40";
         document.getElementById("settimane").value = "3";
-        document.getElementById("revisioni").value = "2";
-        document.getElementById("supporto").value = "2";
+        document.getElementById("include").value = DEFAULT_INCLUDE;
+        document.getElementById("esclusi").value = DEFAULT_ESCLUSI;
         document.getElementById("note").value = "";
         document.querySelector('input[name="pacchetto"][value="Business"]').checked = true;
         sync();
