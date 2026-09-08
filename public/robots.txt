@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://savoweb.com/sitemap.xml
+Sitemap: https://savoweb.it/sitemap.xml
