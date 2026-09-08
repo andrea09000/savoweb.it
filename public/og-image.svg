@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07140F"/>
+      <stop offset="55%" stop-color="#0E2219"/>
+      <stop offset="100%" stop-color="#143D2A"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1080" cy="80" r="220" fill="#7DCF95" fill-opacity="0.12"/>
+  <circle cx="80" cy="560" r="180" fill="#7DCF95" fill-opacity="0.08"/>
+  <text x="72" y="120" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#7DCF95" letter-spacing="6">BRESCIA</text>
+  <text x="72" y="290" font-family="Arial Black, Arial, sans-serif" font-size="118" font-weight="800" fill="#D8F0E0" letter-spacing="-4">SavoWeb</text>
+  <text x="72" y="370" font-family="Arial, Helvetica, sans-serif" font-size="36" fill="#A8D4B8">Creazione siti web a Brescia</text>
+  <rect x="72" y="420" width="72" height="6" fill="#7DCF95"/>
+  <text x="72" y="520" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#8FB89A">Design · Sviluppo · Lancio</text>
+</svg>
