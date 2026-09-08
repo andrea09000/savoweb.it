@@ -368,6 +368,16 @@
         padding-bottom: 0.35rem;
       }
 
+      .occasionale-text {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: var(--paper-ink);
+        background: var(--paper-soft);
+        border-radius: 6px;
+        padding: 0.65rem 0.75rem;
+      }
+
       .sig {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -534,6 +544,17 @@ Supporto post-lancio: 2 mesi</textarea>
 Hosting annuale e dominio (indicati a parte se richiesti)
 Funzionalità extra oltre al pacchetto selezionato</textarea>
 
+        <label class="check" style="margin-top: 0.85rem">
+          <input type="checkbox" id="mostraOccasionale" checked />
+          <div>
+            <strong>Mostra modalità prestazione occasionale</strong>
+            <span>Compare nel PDF</span>
+          </div>
+        </label>
+
+        <label for="occasionale">Testo modalità</label>
+        <textarea id="occasionale" rows="4">Lavoriamo in prestazione occasionale (senza P.IVA). Per te significa: nessun costo di agenzia, massima flessibilità e gestione semplice con ritenuta d'acconto.</textarea>
+
         <label for="note">Note / dettagli</label>
         <textarea id="note" placeholder="Requisiti particolari, pagine, riferimenti..."></textarea>
 
@@ -592,6 +613,11 @@ Funzionalità extra oltre al pacchetto selezionato</textarea>
 
           <p class="section-label">Non incluso (salvo diverso accordo)</p>
           <ul class="doc-list" id="out-esclusi"></ul>
+
+          <div id="block-occasionale">
+            <p class="section-label">Modalità: prestazione occasionale</p>
+            <p class="occasionale-text" id="out-occasionale"></p>
+          </div>
 
           <p class="section-label">Importo</p>
           <table class="money">
@@ -695,6 +721,9 @@ Supporto post-lancio: 2 mesi`;
 Hosting annuale e dominio (indicati a parte se richiesti)
 Funzionalità extra oltre al pacchetto selezionato`;
 
+      const DEFAULT_OCCASIONALE =
+        "Lavoriamo in prestazione occasionale (senza P.IVA). Per te significa: nessun costo di agenzia, massima flessibilità e gestione semplice con ritenuta d'acconto.";
+
       document.getElementById("data").value = todayISO();
       document.getElementById("validita").value = plusDaysISO(15);
 
@@ -755,6 +784,12 @@ Funzionalità extra oltre al pacchetto selezionato`;
           "—",
         );
 
+        const showOcc = document.getElementById("mostraOccasionale").checked;
+        const occBlock = document.getElementById("block-occasionale");
+        occBlock.style.display = showOcc ? "" : "none";
+        document.getElementById("out-occasionale").textContent =
+          document.getElementById("occasionale").value.trim() || "—";
+
         document.getElementById("out-pacchetti").innerHTML = Object.keys(pkgs)
           .map((name) => {
             const mark = name === selected ? "☑" : "☐";
@@ -793,6 +828,8 @@ Funzionalità extra oltre al pacchetto selezionato`;
         document.getElementById("settimane").value = "3";
         document.getElementById("include").value = DEFAULT_INCLUDE;
         document.getElementById("esclusi").value = DEFAULT_ESCLUSI;
+        document.getElementById("mostraOccasionale").checked = true;
+        document.getElementById("occasionale").value = DEFAULT_OCCASIONALE;
         document.getElementById("note").value = "";
         document.querySelector('input[name="pacchetto"][value="Business"]').checked = true;
         sync();
