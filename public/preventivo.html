@@ -509,9 +509,91 @@
           </label>
         </div>
 
+        <label>Tecnologia sito</label>
+        <div class="checks">
+          <label class="check">
+            <input type="radio" name="tech" value="HTML" checked />
+            <div>
+              <strong>HTML</strong>
+              <span>Sito statico / Vite — veloce e leggero</span>
+            </div>
+          </label>
+          <label class="check">
+            <input type="radio" name="tech" value="WordPress" />
+            <div>
+              <strong>WordPress</strong>
+              <span>Gestione contenuti autonoma</span>
+            </div>
+          </label>
+          <label class="check">
+            <input type="radio" name="tech" value="React" />
+            <div>
+              <strong>React</strong>
+              <span>App web moderna / interattiva</span>
+            </div>
+          </label>
+          <label class="check">
+            <input type="radio" name="tech" value="Altro" />
+            <div>
+              <strong>Altro</strong>
+              <span>Specifica sotto</span>
+            </div>
+          </label>
+        </div>
+
+        <label for="techNote">Dettaglio tecnologia (opzionale)</label>
+        <input id="techNote" placeholder="Es. Next.js, theme custom, headless..." />
+
+        <label>Hosting e dominio</label>
+        <div class="checks">
+          <label class="check">
+            <input type="radio" name="hosting" value="escluso" checked />
+            <div>
+              <strong>Non incluso</strong>
+              <span>Cliente gestisce hosting/dominio (o a parte)</span>
+            </div>
+          </label>
+          <label class="check">
+            <input type="radio" name="hosting" value="incluso" />
+            <div>
+              <strong>Incluso nel preventivo</strong>
+              <span>Setup + primo periodo come da campi sotto</span>
+            </div>
+          </label>
+          <label class="check">
+            <input type="radio" name="hosting" value="consigliato" />
+            <div>
+              <strong>Consigliato a parte</strong>
+              <span>Ti indico provider e costo stimato</span>
+            </div>
+          </label>
+        </div>
+
         <div class="row2">
           <div>
-            <label for="importo">Importo (€)</label>
+            <label for="hostingProvider">Provider hosting</label>
+            <input id="hostingProvider" placeholder="Es. Vercel, Aruba, SiteGround..." />
+          </div>
+          <div>
+            <label for="hostingCosto">Costo hosting / anno (€)</label>
+            <input id="hostingCosto" type="number" min="0" step="1" placeholder="Es. 80" />
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="dominio">Dominio</label>
+            <input id="dominio" placeholder="Es. nomcliente.it" />
+          </div>
+          <div>
+            <label for="dominioCosto">Costo dominio / anno (€)</label>
+            <input id="dominioCosto" type="number" min="0" step="1" placeholder="Es. 15" />
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="importo">Importo sito (€)</label>
             <input id="importo" type="number" min="0" step="1" value="900" />
           </div>
           <div>
@@ -599,6 +681,22 @@ Funzionalità extra oltre al pacchetto selezionato</textarea>
 
           <p class="section-label">Pacchetto scelto</p>
           <div class="pkg" id="out-pacchetti"></div>
+
+          <p class="section-label">Sito e hosting</p>
+          <table class="kv">
+            <tr>
+              <td>Tecnologia</td>
+              <td id="out-tech">HTML</td>
+            </tr>
+            <tr>
+              <td>Hosting</td>
+              <td id="out-hosting">—</td>
+            </tr>
+            <tr>
+              <td>Dominio</td>
+              <td id="out-dominio">—</td>
+            </tr>
+          </table>
 
           <p class="section-label">Cosa include questo preventivo</p>
           <ul class="doc-list" id="out-include"></ul>
@@ -748,6 +846,45 @@ Funzionalità extra oltre al pacchetto selezionato`;
           document.getElementById("telefono").value || "—";
         document.getElementById("out-progetto").textContent =
           document.getElementById("progetto").value || "—";
+
+        const tech =
+          document.querySelector('input[name="tech"]:checked')?.value || "HTML";
+        const techNote = document.getElementById("techNote").value.trim();
+        document.getElementById("out-tech").textContent = techNote
+          ? `${tech} — ${techNote}`
+          : tech;
+
+        const hostingMode =
+          document.querySelector('input[name="hosting"]:checked')?.value ||
+          "escluso";
+        const provider = document.getElementById("hostingProvider").value.trim();
+        const hostingCosto = document.getElementById("hostingCosto").value;
+        const hostingBits = [];
+        if (hostingMode === "escluso") {
+          hostingBits.push("Non incluso nel preventivo");
+        } else if (hostingMode === "incluso") {
+          hostingBits.push("Incluso nel preventivo");
+        } else {
+          hostingBits.push("Consigliato a parte");
+        }
+        if (provider) hostingBits.push(provider);
+        if (hostingCosto !== "") hostingBits.push(`${euro(hostingCosto)} / anno`);
+        document.getElementById("out-hosting").textContent = hostingBits.join(" · ");
+
+        const dominio = document.getElementById("dominio").value.trim();
+        const dominioCosto = document.getElementById("dominioCosto").value;
+        if (!dominio && dominioCosto === "") {
+          document.getElementById("out-dominio").textContent =
+            hostingMode === "escluso"
+              ? "A carico del cliente / da definire"
+              : "Da definire";
+        } else {
+          const domBits = [];
+          domBits.push(dominio || "Da definire");
+          if (dominioCosto !== "") domBits.push(`${euro(dominioCosto)} / anno`);
+          document.getElementById("out-dominio").textContent = domBits.join(" · ");
+        }
+
         document.getElementById("out-totale").textContent = euro(importo);
         document.getElementById("out-acconto-perc").textContent = String(perc);
         document.getElementById("out-acconto").textContent = euro(acconto);
@@ -802,6 +939,13 @@ Funzionalità extra oltre al pacchetto selezionato`;
         document.getElementById("email").value = "";
         document.getElementById("telefono").value = "";
         document.getElementById("progetto").value = "";
+        document.querySelector('input[name="tech"][value="HTML"]').checked = true;
+        document.getElementById("techNote").value = "";
+        document.querySelector('input[name="hosting"][value="escluso"]').checked = true;
+        document.getElementById("hostingProvider").value = "";
+        document.getElementById("hostingCosto").value = "";
+        document.getElementById("dominio").value = "";
+        document.getElementById("dominioCosto").value = "";
         document.getElementById("importo").value = "900";
         document.getElementById("accontoPerc").value = "40";
         document.getElementById("settimane").value = "3";
