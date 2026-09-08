@@ -69,12 +69,6 @@ const services = [
   },
 ];
 
-const WHATSAPP_NUMBER = "393249573687";
-
-function whatsappLink(message: string) {
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-}
-
 const plans = [
   {
     name: "Vetrina",
@@ -346,11 +340,7 @@ export default function App() {
                 </ul>
                 <a
                   className={`btn ${plan.featured ? "btn--accent" : "btn--line"}`}
-                  href={whatsappLink(
-                    `Ciao! Vorrei un preventivo per il pacchetto ${plan.name}.`,
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={`mailto:info@savoweb.com?subject=${encodeURIComponent(`Preventivo pacchetto ${plan.name}`)}`}
                 >
                   Richiedi preventivo
                 </a>
@@ -369,32 +359,10 @@ export default function App() {
             </h2>
             <p className="contact__note">
               Lavoro con aziende e professionisti a Brescia e in tutta la
-              Lombardia. Scrivimi su WhatsApp o via email: risposta entro 24 ore.
+              Lombardia. Scrivimi: risposta entro 24 ore.
             </p>
-            <div className="contact__links">
-              <a
-                className="contact__mail"
-                href={whatsappLink(
-                  "Ciao! Vorrei parlare di un progetto con SavoWeb.",
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                WhatsApp
-              </a>
-              <a className="contact__mail contact__mail--secondary" href="mailto:info@savoweb.com">
-                info@savoweb.com
-              </a>
-            </div>
-            <a
-              className="contact__phone"
-              href={whatsappLink(
-                "Ciao! Vorrei parlare di un progetto con SavoWeb.",
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              +39 324 957 3687
+            <a className="contact__mail" href="mailto:info@savoweb.com">
+              info@savoweb.com
             </a>
           </div>
         </section>
