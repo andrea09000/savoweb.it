@@ -511,25 +511,17 @@
 
         <div class="row2">
           <div>
-            <label for="netto">Importo netto (€)</label>
-            <input id="netto" type="number" min="0" step="1" value="900" />
+            <label for="importo">Importo (€)</label>
+            <input id="importo" type="number" min="0" step="1" value="900" />
           </div>
-          <div>
-            <label for="iva">IVA (€)</label>
-            <input id="iva" type="number" min="0" step="1" value="0" />
-          </div>
-        </div>
-
-        <div class="row2">
           <div>
             <label for="accontoPerc">Acconto %</label>
             <input id="accontoPerc" type="number" min="0" max="100" value="40" />
           </div>
-          <div>
-            <label for="settimane">Settimane consegna</label>
-            <input id="settimane" type="number" min="1" value="3" />
-          </div>
         </div>
+
+        <label for="settimane">Settimane consegna</label>
+        <input id="settimane" type="number" min="1" value="3" />
 
         <label for="include">Cosa include (una riga = un punto)</label>
         <textarea id="include" rows="7">Design UI su misura e layout responsive
@@ -553,7 +545,7 @@ Funzionalità extra oltre al pacchetto selezionato</textarea>
         </label>
 
         <label for="occasionale">Testo modalità</label>
-        <textarea id="occasionale" rows="4">Lavoriamo in prestazione occasionale (senza P.IVA). Per te significa: nessun costo di agenzia, massima flessibilità e gestione semplice con ritenuta d'acconto.</textarea>
+        <textarea id="occasionale" rows="4">Lavoriamo in prestazione occasionale (senza P.IVA). Per te significa: nessun costo di agenzia, massima flessibilità e gestione semplice.</textarea>
 
         <label for="note">Note / dettagli</label>
         <textarea id="note" placeholder="Requisiti particolari, pagine, riferimenti..."></textarea>
@@ -621,14 +613,6 @@ Funzionalità extra oltre al pacchetto selezionato</textarea>
 
           <p class="section-label">Importo</p>
           <table class="money">
-            <tr>
-              <td>Importo netto</td>
-              <td id="out-netto">€ 0</td>
-            </tr>
-            <tr>
-              <td>IVA (se applicabile)</td>
-              <td id="out-iva">€ 0</td>
-            </tr>
             <tr class="total">
               <td>Totale</td>
               <td id="out-totale">€ 0</td>
@@ -722,7 +706,7 @@ Hosting annuale e dominio (indicati a parte se richiesti)
 Funzionalità extra oltre al pacchetto selezionato`;
 
       const DEFAULT_OCCASIONALE =
-        "Lavoriamo in prestazione occasionale (senza P.IVA). Per te significa: nessun costo di agenzia, massima flessibilità e gestione semplice con ritenuta d'acconto.";
+        "Lavoriamo in prestazione occasionale (senza P.IVA). Per te significa: nessun costo di agenzia, massima flessibilità e gestione semplice.";
 
       document.getElementById("data").value = todayISO();
       document.getElementById("validita").value = plusDaysISO(15);
@@ -743,11 +727,9 @@ Funzionalità extra oltre al pacchetto selezionato`;
       }
 
       function sync() {
-        const netto = Number(document.getElementById("netto").value) || 0;
-        const iva = Number(document.getElementById("iva").value) || 0;
+        const importo = Number(document.getElementById("importo").value) || 0;
         const perc = Number(document.getElementById("accontoPerc").value) || 0;
-        const totale = netto + iva;
-        const acconto = Math.round((totale * perc) / 100);
+        const acconto = Math.round((importo * perc) / 100);
         const selected = selectedPackage();
 
         document.getElementById("out-numero").textContent =
@@ -766,9 +748,7 @@ Funzionalità extra oltre al pacchetto selezionato`;
           document.getElementById("telefono").value || "—";
         document.getElementById("out-progetto").textContent =
           document.getElementById("progetto").value || "—";
-        document.getElementById("out-netto").textContent = euro(netto);
-        document.getElementById("out-iva").textContent = euro(iva);
-        document.getElementById("out-totale").textContent = euro(totale);
+        document.getElementById("out-totale").textContent = euro(importo);
         document.getElementById("out-acconto-perc").textContent = String(perc);
         document.getElementById("out-acconto").textContent = euro(acconto);
         document.getElementById("out-settimane").textContent =
@@ -822,8 +802,7 @@ Funzionalità extra oltre al pacchetto selezionato`;
         document.getElementById("email").value = "";
         document.getElementById("telefono").value = "";
         document.getElementById("progetto").value = "";
-        document.getElementById("netto").value = "900";
-        document.getElementById("iva").value = "0";
+        document.getElementById("importo").value = "900";
         document.getElementById("accontoPerc").value = "40";
         document.getElementById("settimane").value = "3";
         document.getElementById("include").value = DEFAULT_INCLUDE;
